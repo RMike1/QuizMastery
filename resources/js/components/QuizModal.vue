@@ -1,5 +1,5 @@
 <script setup>
-import PriButton from '@/Components/PriButton.vue';
+import PriButton from '@/components/PriButton.vue';
 import { defineEmits } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 const props = defineProps({
