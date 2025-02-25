@@ -26,6 +26,14 @@ const appName = import.meta.env.VITE_APP_NAME || 'QuizMastery';
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./pages/${name}.vue`, import.meta.glob<DefineComponent>('./pages/**/*.vue')),
+
+    // resolve: (name) => {
+    //     const pages = import.meta.glob<DefineComponent>("./Pages/**/*.vue", { eager: true });
+    //     let page = pages[`./Pages/${name}.vue`];
+    //     page.default.layout = page.default.layout || MainLayout;
+    //     return page;
+    // },
+
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
