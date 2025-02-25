@@ -4,7 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Answer;
+use App\Models\Question;
 use Illuminate\Database\Seeder;
+use Database\Seeders\LevelSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +16,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'first_name' => 'Jon',
+            'last_name' => 'Snow',
+            'email' => 'jonsnow@gmail.com',
+            'password' => 1234,
         ]);
+        $this->call(([
+            LevelSeeder::class
+        ]));
+        Question::factory(40)->create();
+        Answer::factory(80)->create();
     }
 }
