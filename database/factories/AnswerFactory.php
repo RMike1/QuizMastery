@@ -17,10 +17,8 @@ class AnswerFactory extends Factory
      */
     public function definition(): array
     {
-        $questionIds = Question::pluck('id')->toArray();
         return [
             'answer' => fake()->sentence(),
-            'question_id' => fake()->randomElement($questionIds), 
             'is_correct' => fake()->boolean()
         ];
     }

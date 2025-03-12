@@ -17,11 +17,9 @@ class QuestionFactory extends Factory
      */
     public function definition(): array
     {
-        $levels=Level::pluck('id')->toArray();
         return [
             'question' => fake()->sentence(),
             'marks' => fake()->numberBetween(1, 10),
-            'level_id'=>fake()->randomElement($levels)
         ];
     }
 }

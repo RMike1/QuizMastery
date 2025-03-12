@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Level;
+use App\Models\Question;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -15,32 +17,6 @@ class LevelSeeder extends Seeder
      */
     public function run(): void
     {
-        $user=User::first()->id;
-        DB::table('levels')->insert([
-            [
-                'id'=>Str::ulid(),
-                'level'=>1,
-                'total_questions'=>5,
-                'user_id'=>$user
-            ],
-            [
-                'id'=>Str::ulid(),
-                'level'=>2,
-                'total_questions'=>10,
-                'user_id'=>$user
-            ],
-            [
-                'id'=>Str::ulid(),
-                'level'=>3,
-                'total_questions'=>15,
-                'user_id'=>$user
-            ],
-            [
-                'id'=>Str::ulid(),
-                'level'=>4,
-                'total_questions'=>20,
-                'user_id'=>$user
-            ],
-        ]);
+        Level::factory()->count(4)->has(Question::factory()->count(5)->hasAnswers(4))->create();
     }
 }
