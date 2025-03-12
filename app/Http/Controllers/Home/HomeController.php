@@ -15,11 +15,15 @@ class HomeController extends Controller
      */
     public function index()
     {
-       return Inertia::render('home/Index',[
-            'level' => Level::with('questions.answers')->withCount('questions')->get(),
+        return Inertia::render('home/Index', [
+            'level' => Level::with(['questions' => function ($query) {
+                $query->inRandomOrder()->with(['answers' => function ($q) {
+                    $q->inRandomOrder();
+                }]);
+            }])->withCount('questions')->get(),
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
-       ]);
+        ]);
     }
 
     /**

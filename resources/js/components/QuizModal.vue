@@ -176,7 +176,7 @@ const submit = () => {
                                                       
                                                       <!---------------- Images Answers ------------------>
 
-                                                      <div class="grid grid-cols-2 gap-4 w-full lg:grid-cols-2">
+                                                      <!-- <div class="grid grid-cols-2 gap-4 w-full lg:grid-cols-2">
                                                             <div
                                                                   class="p-4 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700">
                                                                   <div
@@ -247,7 +247,7 @@ const submit = () => {
                                                                         Price</div>
                                                             </div>
                                                            
-                                                      </div>
+                                                      </div> -->
 
 
                                                 </div>
