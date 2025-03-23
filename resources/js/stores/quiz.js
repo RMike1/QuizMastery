@@ -53,6 +53,10 @@ export const useQuizStore = defineStore('quiz', () => {
     showModal.value = false
   }
 
+  function setCurrentIndex(index) {
+    currentQuestionValue.value = index
+  }
+
   function setLevel(newLevel) {
     level.value = newLevel
     // Reset selected answers when setting a new level
@@ -76,6 +80,7 @@ export const useQuizStore = defineStore('quiz', () => {
     selectedAnswer,
     showQuizSection,
     hideQuizSection,
+    setCurrentIndex,
     setLevel
   }
 })

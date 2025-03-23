@@ -26,314 +26,142 @@ const selectedAnswer = (index) => {
 <template>
       <Transition name="bounce">
             <div v-if="show"
-                  class="fixed z-40 w-full modal-mask h-full overflow-y-auto bg-white border-t border-gray-200 rounded-t-lg dark:border-gray-700 dark:bg-gray-800 transition-transform bottom-0 left-0 right-0">
+                  class="fixed inset-0 z-40 overflow-y-auto bg-white dark:bg-gray-800 md:inset-x-[10%] md:top-[5%] md:bottom-[5%] md:rounded-lg md:border md:border-gray-200 dark:md:border-gray-700">
                   <!-- Header -->
-                  <div class="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
-                        @click="quizStore.hideQuizSection()">
-                        <span
-                              class="absolute w-8 h-1 -translate-x-1/2 bg-gray-300 rounded-lg top-3 left-1/2 dark:bg-gray-600"></span>
-                        <h5 id="drawer-swipe-label"
-                              class="inline-flex items-center text-base text-gray-500 dark:text-gray-400 font-medium">
-                              <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor" viewBox="0 0 18 18">
-                                    <path
-                                          d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10ZM17 13h-2v-2a1 1 0 0 0-2 0v2h-2a1 1 0 0 0 0 2h2v2a1 1 0 0 0 2 0v-2h2a1 1 0 0 0 0-2Z" />
-                              </svg>Back
-                        </h5>
+                  <div class="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                        <div class="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                              @click="quizStore.hideQuizSection()">
+                              <span
+                                    class="block w-8 h-1 mx-auto bg-gray-300 rounded-lg dark:bg-gray-600"></span>
+                              <h5 id="drawer-swipe-label"
+                                    class="inline-flex items-center text-base font-semibold text-gray-500 uppercase dark:text-gray-400">
+                                    <svg class="w-4 h-4 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                          fill="none" viewBox="0 0 20 20">
+                                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="M10 5.757v8.486M5.757 10h8.486M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    Quiz
+                              </h5>
+                        </div>
+
+                        <!-- Progress Steps -->
+                        <div class="p-4">
+                              <ol class="flex flex-wrap gap-2 sm:gap-4 items-center justify-center">
+                                    <li v-for="(question, i) in quizStore.currentLevelTotalQuestions" :key="i"
+                                          class="flex items-center">
+                                          <button @click="quizStore.setCurrentIndex(i)"
+                                                class="flex items-center justify-center rounded-t-lg cursor-pointer transition-all hover:scale-105"
+                                                :class="{ 'border-primary-500 bg-primary-50 w-10 h-10 border-4 dark:border-gray-100 dark:bg-gray-900/20': i === quizStore.currentIndex,
+                                                      'border-gray-500 dark:border-gray-400 w-8 h-8 border-2': i !== quizStore.currentIndex }">
+                                                <span :class="{ 'text-primary-600 text-xl dark:text-primary-400': i === quizStore.currentIndex,
+                                                            'text-gray-500 dark:text-gray-400': i !== quizStore.currentIndex }">
+                                                      {{ i + 1 }}
+                                                </span>
+                                          </button>
+                                          <span v-if="i + 1 < quizStore.currentLevelTotalQuestions" class="mx-2 text-gray-400">-</span>
+                                    </li>
+                              </ol>
+                        </div>
                   </div>
-                  <!-- Main -->
 
-                  <section class="bg-white py-4 antialiased dark:bg-gray-900 md:py-8">
-                        <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-                              <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
-                                    Quiz Section</h2>
-                              <div class="gap-8 lg:flex">
-                                    <!-- Right content -->
-                                    <form @submit.prevent="submit" class="w-full space-y-4 lg:space-y-4">
-                                          <div class="">
-                                                <ol
-                                                      class="flex flex-col gap-4  rounded-t-lg border-b  border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 sm:justify-center md:flex-row md:items-center lg:gap-6">
+                  <!-- Content -->
+                  <div class="p-4 md:p-6">
+                        <!-- Question -->
+                        <div class="mb-6">
+                              <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white text-center">
+                                    {{ quizStore.currentIndex + 1 }}. {{ quizStore.currentQuestion.question }}?
+                              </h3>
+                        </div>
 
-                                                      <li v-for="(question, i) in quizStore.currentLevelTotalQuestions" :key="i"
-                                                            class="flex md:w-full gap-2 items-center text-gray-200 dark:text-gray-500 sm:after:content-[''] after:hidden"
-                                                            :class="{ 'after:w-full after:h-1 sm:after:inline-block after:mx-6 xl:after:mx-auto after:border-b after:border-gray-200 after:border-1  dark:after:border-gray-700': i + 1 < quizStore.currentLevelTotalQuestions }">
-                                                            <span
-                                                                  class="flex items-center after:content-['/'] sm:after:hidden after:mx-auto">
+                        <div class="flex flex-col md:flex-row gap-4">
+                              <!-- Image Question Section -->
+                              <div v-if="quizStore.currentQuestion.image" class="w-full md:w-1/3">
+                                    <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                          <img :src="quizStore.currentQuestion.image" 
+                                               :alt="'Question ' + (quizStore.currentIndex + 1) + ' image'"
+                                               class="w-full h-auto object-cover" />
+                                    </div>
+                              </div>
 
-                                                                  <!-- <svg class="h-5 w-5 text-gray-500 dark:text-gray-400"
-                                                                        aria-hidden="true"
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="currentColor" viewBox="0 0 20 20">
-                                                                        <path 
-                                                                              d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-                                                                  </svg> -->
-                                                                  <svg class="h-6 w-6  sm:w-6 sm:h-6 me-2.5"
-                                                                        :class="{ 'h-8 w-8 sm:w-8 sm:h-8 text-gray-400 dark:text-gray-100': i === quizStore.currentIndex }"
-                                                                        aria-hidden="true"
-                                                                        xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                        height="24" fill="none" viewBox="0 0 24 24">
-                                                                        <path stroke="currentColor"
-                                                                              stroke-linecap="round"
-                                                                              stroke-linejoin="round" stroke-width="2"
-                                                                              d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                                  </svg>
-                                                                  <span
-                                                                        :class="{ 'text-2xl text-white dark:text-gray-100': i === quizStore.currentIndex }">
-                                                                        {{ i + 1 }}
-                                                                  </span>
-                                                            </span>
-                                                      </li>
-                                                </ol>
-
-                                                <!-- <ol
-                                                      class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
-                                                      <li
-                                                            class="flex md:w-full items-center text-blue-600 dark:text-blue-500 sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
-                                                            <span
-                                                                  class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
-                                                                  <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 me-2.5"
-                                                                        aria-hidden="true"
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="currentColor" viewBox="0 0 20 20">
-                                                                        <path
-                                                                              d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-                                                                  </svg>
-                                                                  Personal <span
-                                                                        class="hidden sm:inline-flex sm:ms-2">Info</span>
-                                                            </span>
-                                                      </li>
-                                                      <li
-                                                            class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
-                                                            <span
-                                                                  class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
-                                                                  <span class="me-2">2</span>
-                                                                  Account
-                                                            </span>
-                                                      </li>
-                                                      <li class="flex items-center">
-                                                            <span class="me-2">3</span>
-                                                            Confirmation
-                                                      </li>
-                                                </ol> -->
-
-                                                <div class="mb-4 bg-primary-50 p-4 text-sm text-primary-800 dark:bg-gray-800 dark:text-primary-400 sm:text-base"
-                                                      role="alert">
-                                                      <h3
-                                                            class="text-3xl text-center font-semibold text-gray-900 dark:text-white">
-                                                            {{ quizStore.currentIndex + 1 }}. {{ quizStore.currentQuestion.question
-                                                            }}?</h3>
-
+                              <!-- Answers Section -->
+                              <div class="w-full md:flex-1">
+                                    <div class="space-y-3">
+                                          <div v-for="(answer, i) in quizStore.currentQuestion.answers" :key="i"
+                                                @click="selectedAnswer(i)"
+                                                class="flex items-start gap-3 p-4 cursor-pointer rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                                :class="{ 'bg-gray-50 dark:bg-gray-700/50 border-primary-500 dark:border-primary-400': quizStore.isAnswerSelected(quizStore.currentQuestion.id, i) }">
+                                                <div class="flex-shrink-0">
+                                                      <input :id="'answer-' + i" type="radio"
+                                                            :value="i"
+                                                            :checked="quizStore.isAnswerSelected(quizStore.currentQuestion.id, i)"
+                                                            :name="'question-' + quizStore.currentQuestion.id"
+                                                            class="w-5 h-5 text-primary-600 bg-gray-100 border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600" />
                                                 </div>
+                                                <label :for="'answer-' + i" class="flex-1 cursor-pointer">
+                                                      <span class="block text-sm sm:text-base text-gray-900 dark:text-white">
+                                                            {{ answer.answer }}
+                                                      </span>
+                                                </label>
                                           </div>
-
-                                          <div class="space-y-4">
-                                                <div class="flex justify-between gap-4">
-                                                      <!---------Image Question-------->
-                                                      <div
-                                                            class="divide-y w-1/3 divide-gray-200  rounded-lg border border-gray-200 bg-white shadow-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
-
-                                                      </div>
-
-
-
-                                                      <!----------------  Answers ------------------>
-                                                      
-
-                                                      <div
-                                                            class="w-full divide-y divide-gray-200 shadow-sm dark:divide-gray-700">
-                                                            <div v-for="(answer, i) in quizStore.currentQuestion.answers" :key="i"
-                                                                  @click="selectedAnswer(i)"
-                                                                  class="flex gap-2 mb-2 cursor-pointer items-center border border-gray-200 dark:border-gray-700  p-4 sm:items-start rounded-lg lg:items-center hover:bg-gray-100 dark:hover:bg-gray-600"
-                                                                  :class="{ 'bg-gray-100 dark:bg-gray-600': quizStore.isAnswerSelected(quizStore.currentQuestion.id, i) }">
-                                                                  <div>
-                                                                        <input :id="'answer-' + i" type="radio"
-                                                                              :value="i"
-                                                                              :checked="quizStore.isAnswerSelected(quizStore.currentQuestion.id, i)"
-                                                                              :name="'question-' + quizStore.currentQuestion.id"
-                                                                              class="h-6 w-6 rounded border-gray-300 bg-gray-100 text-primary-700 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600" />
-                                                                  </div>
-                                                                  <div
-                                                                        class="min-w-0 flex-1 gap-14 xl:flex xl:items-center justify-between">
-                                                                        <div
-                                                                              class="min-w-0 max-w-xl flex-1 gap-6 sm:flex sm:items-center">
-                                                                              <button type="button"
-                                                                                    class="mt-4 font-medium text-gray-900  dark:text-white sm:mt-0">
-                                                                                    {{ answer.answer }}
-                                                                              </button>
-                                                                        </div>
-                                                                        <!-- Tick -->
-                                                                        <!-- <div class="text-green-700">
-                                                                              <svg class="w-4 h-4" aria-hidden="true"
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    fill="none" viewBox="0 0 16 12">
-                                                                                    <path stroke="currentColor"
-                                                                                          stroke-linecap="round"
-                                                                                          stroke-linejoin="round"
-                                                                                          stroke-width="2"
-                                                                                          d="M1 5.917 5.724 10.5 15 1.5" />
-                                                                              </svg>
-                                                                        </div> -->
-                                                                  </div>
-                                                            </div>
-
-                                                      </div>
-                                                      
-                                                      
-                                                      <!---------------- Images Answers ------------------>
-
-                                                      <!-- <div class="grid grid-cols-2 gap-4 w-full lg:grid-cols-2">
-                                                            <div
-                                                                  class="p-4 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700">
-                                                                  <div
-                                                                        class="flex justify-center items-center p-2 mx-auto mb-2 bg-gray-200 dark:bg-gray-600 rounded-full w-[48px] h-[48px] max-w-[48px] max-h-[48px]">
-                                                                        <svg class="inline w-5 h-5 text-gray-500 dark:text-gray-400"
-                                                                              aria-hidden="true"
-                                                                              xmlns="http://www.w3.org/2000/svg"
-                                                                              fill="currentColor" viewBox="0 0 22 21">
-                                                                              <path
-                                                                                    d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                                                                        </svg>
-                                                                  </div>
-                                                                  <div
-                                                                        class="font-medium text-center text-gray-500 dark:text-gray-400">
-                                                                        Chart</div>
-                                                            </div>
-                                                            <div
-                                                                  class="p-4 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700">
-                                                                  <div
-                                                                        class="flex justify-center items-center p-2 mx-auto mb-2 bg-gray-200 dark:bg-gray-600 rounded-full w-[48px] h-[48px] max-w-[48px] max-h-[48px]">
-                                                                        <svg class="inline w-5 h-5 text-gray-500 dark:text-gray-400"
-                                                                              aria-hidden="true"
-                                                                              xmlns="http://www.w3.org/2000/svg"
-                                                                              fill="none" viewBox="0 0 20 16">
-                                                                              <path stroke="currentColor"
-                                                                                    stroke-linecap="round"
-                                                                                    stroke-linejoin="round"
-                                                                                    stroke-width="2"
-                                                                                    d="M5 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1M2 5h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
-                                                                        </svg>
-                                                                  </div>
-                                                                  <div
-                                                                        class="font-medium text-center text-gray-500 dark:text-gray-400">
-                                                                        Table</div>
-                                                            </div>
-                                                            <div
-                                                                  class="p-4 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700">
-                                                                  <div
-                                                                        class="flex justify-center items-center p-2 mx-auto mb-2 bg-gray-200 dark:bg-gray-600 rounded-full w-[48px] h-[48px] max-w-[48px] max-h-[48px]">
-                                                                        <svg class="inline w-5 h-5 text-gray-500 dark:text-gray-400"
-                                                                              aria-hidden="true"
-                                                                              xmlns="http://www.w3.org/2000/svg"
-                                                                              fill="none" viewBox="0 0 18 20">
-                                                                              <path
-                                                                                    d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                                                                        </svg>
-                                                                  </div>
-                                                                  <div
-                                                                        class="font-medium text-center text-gray-500 dark:text-gray-400">
-                                                                        List</div>
-                                                            </div>
-                                                            <div
-                                                                  class="p-4 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700">
-                                                                  <div
-                                                                        class="flex justify-center items-center p-2 mx-auto mb-2 bg-gray-200 dark:bg-gray-600 rounded-full w-[48px] h-[48px] max-w-[48px] max-h-[48px]">
-                                                                        <svg class="inline w-5 h-5 text-gray-500 dark:text-gray-400"
-                                                                              aria-hidden="true"
-                                                                              xmlns="http://www.w3.org/2000/svg"
-                                                                              fill="none" viewBox="0 0 20 16">
-                                                                              <path stroke="currentColor"
-                                                                                    stroke-linecap="round"
-                                                                                    stroke-linejoin="round"
-                                                                                    stroke-width="2"
-                                                                                    d="M5 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1M2 5h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
-                                                                        </svg>
-                                                                  </div>
-                                                                  <div
-                                                                        class="font-medium text-center text-gray-500 dark:text-gray-400">
-                                                                        Price</div>
-                                                            </div>
-                                                           
-                                                      </div> -->
-
-
-                                                </div>
-
-                                                <!-- Next and Previous Buttons -->
-
-                                                <div class="gap-4 sm:flex sm:items-center sm:justify-between">
-                                                      <PriButton :disabled="quizStore.currentIndex === 0"
-                                                            :class="{ 'bg-transparent border border-zinc-700 dark:border-zinc-700 text-zinc-700': quizStore.currentIndex === 0 }"
-                                                            @click="quizStore.previousQuestion()" :label="'Previous'" />
-                                                      <PriButton v-if="quizStore.currentIndex + 1 < quizStore.currentLevelTotalQuestions"
-                                                            @click="quizStore.nextQuestion()" :label="'Next'" />
-                                                      <PriButton type="submit"
-                                                            v-if="quizStore.currentIndex + 1 === quizStore.currentLevelTotalQuestions"
-                                                            :disabled="form.processing"
-                                                            :class="{ 'bg-green-600/25': quizStore.currentIndex + 1 === quizStore.currentLevelTotalQuestions }"
-                                                            :label="form.processing ? '...' : 'Submit'" />
-                                                </div>
-                                          </div>
-                                    </form>
+                                    </div>
                               </div>
                         </div>
 
-
-
-                  </section>
-
+                        <!-- Navigation Buttons -->
+                        <div class="flex items-center justify-between mt-6 gap-4">
+                              <PriButton :disabled="quizStore.currentIndex === 0"
+                                    :class="{ 'opacity-50 cursor-not-allowed': quizStore.currentIndex === 0 }"
+                                    @click="quizStore.previousQuestion()" :label="'Previous'" />
+                              
+                              <PriButton v-if="quizStore.currentIndex + 1 < quizStore.currentLevelTotalQuestions"
+                                    @click="quizStore.nextQuestion()" :label="'Next'" />
+                              
+                              <PriButton v-else
+                                    type="submit"
+                                    :disabled="form.processing"
+                                    :class="{ 'bg-green-600 hover:bg-green-700': !form.processing }"
+                                    :label="form.processing ? 'Submitting...' : 'Submit'" />
+                        </div>
+                  </div>
             </div>
       </Transition>
 </template>
 
 <style scoped>
 .bounce-enter-active {
-      animation: bounce-in 0.4s;
+      animation: bounce-in 0.5s;
 }
 
 .bounce-leave-active {
-      animation: bounce-in 0.4s reverse;
+      animation: bounce-in 0.5s reverse;
 }
 
 @keyframes bounce-in {
       0% {
-            transform: scale(0);
-      }
-
-      50% {
-            transform: scale(1.1);
+            transform: translateY(100%);
       }
 
       100% {
-            transform: scale(1);
+            transform: translateY(0);
       }
 }
 
-.shake {
-      animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-      transform: translate3d(0, 0, 0);
+.step-divider::after {
+      content: "-";
+      margin: 0 1rem;
 }
 
-@keyframes shake {
+@media (min-width: 768px) {
+      @keyframes bounce-in {
+            0% {
+                  transform: scale(0.95);
+                  opacity: 0;
+            }
 
-      10%,
-      90% {
-            transform: translate3d(-1px, 0, 0);
-      }
-
-      20%,
-      80% {
-            transform: translate3d(2px, 0, 0);
-      }
-
-      30%,
-      50%,
-      70% {
-            transform: translate3d(-4px, 0, 0);
-      }
-
-      40%,
-      60% {
-            transform: translate3d(4px, 0, 0);
+            100% {
+                  transform: scale(1);
+                  opacity: 1;
+            }
       }
 }
 </style>
