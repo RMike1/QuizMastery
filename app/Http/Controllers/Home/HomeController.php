@@ -16,9 +16,9 @@ class HomeController extends Controller
     public function index()
     {
         return Inertia::render('home/Index', [
-            'level' => Level::with(['questions' => function ($query) {
-                $query->inRandomOrder()->with(['answers' => function ($q) {
-                    $q->inRandomOrder();
+            'level' => Level::query()->select('id','level','total_questions')->with(['questions' => function ($query) {
+                $query->select('id','question','marks','image','level_id')->inRandomOrder()->with(['answers' => function ($q) {
+                    $q->select('id','answer','question_id','is_correct')->inRandomOrder();
                 }]);
             }])->withCount('questions')->get(),
             'canLogin' => Route::has('login'),
