@@ -1,8 +1,8 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
-export default {
-    darkMode: ['class'],
+module.exports = {
+    darkMode: 'class',
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -12,14 +12,35 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Instrument Sans', ...defaultTheme.fontFamily.sans],
-            },
-            borderRadius: {
-                lg: 'var(--radius)',
-                md: 'calc(var(--radius) - 2px)',
-                sm: 'calc(var(--radius) - 4px)',
+                sans: ['Inter var', ...defaultTheme.fontFamily.sans],
             },
             colors: {
+                primary: {
+                    50: '#f0f9ff',
+                    100: '#e0f2fe',
+                    200: '#bae6fd',
+                    300: '#7dd3fc',
+                    400: '#38bdf8',
+                    500: '#0ea5e9',
+                    600: '#0284c7',
+                    700: '#0369a1',
+                    800: '#075985',
+                    900: '#0c4a6e',
+                    950: '#082f49',
+                },
+                secondary: {
+                    50: '#fdf4ff',
+                    100: '#fae8ff',
+                    200: '#f5d0fe',
+                    300: '#f0abfc',
+                    400: '#e879f9',
+                    500: '#d946ef',
+                    600: '#c026d3',
+                    700: '#a21caf',
+                    800: '#86198f',
+                    900: '#701a75',
+                    950: '#4a044e',
+                },
                 background: 'hsl(var(--background))',
                 foreground: 'hsl(var(--foreground))',
                 card: {
@@ -29,18 +50,6 @@ export default {
                 popover: {
                     DEFAULT: 'hsl(var(--popover))',
                     foreground: 'hsl(var(--popover-foreground))',
-                },
-                primary: {
-                    DEFAULT: 'hsl(var(--primary))',
-                    foreground: 'hsl(var(--primary-foreground))',
-                },
-                secondary: {
-                    DEFAULT: 'hsl(var(--secondary))',
-                    foreground: 'hsl(var(--secondary-foreground))',
-                },
-                muted: {
-                    DEFAULT: 'hsl(var(--muted))',
-                    foreground: 'hsl(var(--muted-foreground))',
                 },
                 accent: {
                     DEFAULT: 'hsl(var(--accent))',
@@ -71,7 +80,49 @@ export default {
                     ring: 'hsl(var(--sidebar-ring))',
                 },
             },
+            borderRadius: {
+                lg: 'var(--radius)',
+                md: 'calc(var(--radius) - 2px)',
+                sm: 'calc(var(--radius) - 4px)',
+            },
+            animation: {
+                'gradient-x': 'gradient-x 15s ease infinite',
+                'gradient-y': 'gradient-y 15s ease infinite',
+                'gradient-xy': 'gradient-xy 15s ease infinite',
+            },
+            keyframes: {
+                'gradient-y': {
+                    '0%, 100%': {
+                        'background-size': '400% 400%',
+                        'background-position': 'center top'
+                    },
+                    '50%': {
+                        'background-size': '200% 200%',
+                        'background-position': 'center center'
+                    }
+                },
+                'gradient-x': {
+                    '0%, 100%': {
+                        'background-size': '200% 200%',
+                        'background-position': 'left center'
+                    },
+                    '50%': {
+                        'background-size': '200% 200%',
+                        'background-position': 'right center'
+                    }
+                },
+                'gradient-xy': {
+                    '0%, 100%': {
+                        'background-size': '400% 400%',
+                        'background-position': 'left center'
+                    },
+                    '50%': {
+                        'background-size': '200% 200%',
+                        'background-position': 'right center'
+                    }
+                }
+            }
         },
     },
-    plugins: [require('tailwindcss-animate')],
+    plugins: [require('@tailwindcss/forms'), require('tailwindcss-animate')],
 };
