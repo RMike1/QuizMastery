@@ -89,17 +89,18 @@ const selectedAnswer = (index) => {
                                           <div v-for="(answer, i) in quizStore.currentQuestion.answers" :key="i"
                                                 @click="selectedAnswer(i)"
                                                 class="flex items-start gap-3 p-4 cursor-pointer rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                                                :class="{ 'bg-gray-50 dark:bg-gray-700/50 border-primary-500 dark:border-primary-400': quizStore.isAnswerSelected(quizStore.currentQuestion.id, i) }">
+                                                :class="{ 'bg-gray-50 dark:bg-gray-500/50 border-primary-500 dark:border-primary-400': quizStore.isAnswerSelected(quizStore.currentQuestion.id, i) }">
                                                 <div class="flex-shrink-0">
                                                       <input :id="'answer-' + i" type="radio"
                                                             :value="i"
+                                                            hidden
                                                             :checked="quizStore.isAnswerSelected(quizStore.currentQuestion.id, i)"
                                                             :name="'question-' + quizStore.currentQuestion.id"
                                                             class="w-5 h-5 text-primary-600 bg-gray-100 border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600" />
                                                 </div>
                                                 <label :for="'answer-' + i" class="flex-1 cursor-pointer">
                                                       <span class="block text-sm sm:text-base text-gray-900 dark:text-white">
-                                                            {{ answer.answer }}
+                                                           {{ i+1 }}. {{ answer.answer }}
                                                       </span>
                                                 </label>
                                           </div>

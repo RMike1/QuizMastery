@@ -8,7 +8,7 @@ export const useQuizStore = defineStore('quiz', () => {
   const result = ref(0)
   const showModal = ref(false)
   const level = ref(null)
-  const selectedAnswers = ref({}) // Store answers for each question
+  const selectedAnswers = ref({}) 
 
   const currentQuestion = computed(() => {
     return level.value[currentLevelValue.value].questions[currentQuestionValue.value]
@@ -59,7 +59,6 @@ export const useQuizStore = defineStore('quiz', () => {
 
   function setLevel(newLevel) {
     level.value = newLevel
-    // Reset selected answers when setting a new level
     selectedAnswers.value = {}
   }
 
