@@ -1,23 +1,25 @@
 <script setup>
 import PriButton from '@/components/PriButton.vue';
-import { defineEmits } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-const props = defineProps({
-      show: Boolean,
-      currentQuestion: Object,
-      currentLevelTotalQuestions: Number,
-      currentIndex: Number
+import { useQuizStore } from '@/stores/quiz';
+
+const quizStore = useQuizStore();
+
+defineProps({
+    show: Boolean
 });
-const emit = defineEmits(['selectedAnswer', 'nextQuestion', 'previousQuestion', 'closeQuizModal']);
-const selectedAnswer = (index) => {
-      emit('selectedAnswer', index);
-}
+
 const form = useForm({
-      answer: null
+    answer: null
 });
+
 const submit = () => {
-      form.post(route('submit.answer'), {
-      })
+    form.post(route('submit.answer'), {
+    });
+}
+
+const selectedAnswer = (index) => {
+    quizStore.selectedAnswer(index);
 }
 
 </script>
@@ -27,7 +29,7 @@ const submit = () => {
                   class="fixed z-40 w-full modal-mask h-full overflow-y-auto bg-white border-t border-gray-200 rounded-t-lg dark:border-gray-700 dark:bg-gray-800 transition-transform bottom-0 left-0 right-0">
                   <!-- Header -->
                   <div class="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
-                        @click="$emit('closeQuizModal')">
+                        @click="quizStore.hideQuizSection()">
                         <span
                               class="absolute w-8 h-1 -translate-x-1/2 bg-gray-300 rounded-lg top-3 left-1/2 dark:bg-gray-600"></span>
                         <h5 id="drawer-swipe-label"
@@ -52,9 +54,9 @@ const submit = () => {
                                                 <ol
                                                       class="flex flex-col gap-4  rounded-t-lg border-b  border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 sm:justify-center md:flex-row md:items-center lg:gap-6">
 
-                                                      <li v-for="(question, i) in currentLevelTotalQuestions" :key="i"
+                                                      <li v-for="(question, i) in quizStore.currentLevelTotalQuestions" :key="i"
                                                             class="flex md:w-full gap-2 items-center text-gray-200 dark:text-gray-500 sm:after:content-[''] after:hidden"
-                                                            :class="{ 'after:w-full after:h-1 sm:after:inline-block after:mx-6 xl:after:mx-auto after:border-b after:border-gray-200 after:border-1  dark:after:border-gray-700': i + 1 < currentLevelTotalQuestions }">
+                                                            :class="{ 'after:w-full after:h-1 sm:after:inline-block after:mx-6 xl:after:mx-auto after:border-b after:border-gray-200 after:border-1  dark:after:border-gray-700': i + 1 < quizStore.currentLevelTotalQuestions }">
                                                             <span
                                                                   class="flex items-center after:content-['/'] sm:after:hidden after:mx-auto">
 
@@ -66,7 +68,7 @@ const submit = () => {
                                                                               d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
                                                                   </svg> -->
                                                                   <svg class="h-6 w-6  sm:w-6 sm:h-6 me-2.5"
-                                                                        :class="{ 'h-8 w-8 sm:w-8 sm:h-8 text-gray-400 dark:text-gray-100': i === currentIndex }"
+                                                                        :class="{ 'h-8 w-8 sm:w-8 sm:h-8 text-gray-400 dark:text-gray-100': i === quizStore.currentIndex }"
                                                                         aria-hidden="true"
                                                                         xmlns="http://www.w3.org/2000/svg" width="24"
                                                                         height="24" fill="none" viewBox="0 0 24 24">
@@ -76,7 +78,7 @@ const submit = () => {
                                                                               d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                                   </svg>
                                                                   <span
-                                                                        :class="{ 'text-2xl text-white dark:text-gray-100': i === currentIndex }">
+                                                                        :class="{ 'text-2xl text-white dark:text-gray-100': i === quizStore.currentIndex }">
                                                                         {{ i + 1 }}
                                                                   </span>
                                                             </span>
@@ -118,7 +120,7 @@ const submit = () => {
                                                       role="alert">
                                                       <h3
                                                             class="text-3xl text-center font-semibold text-gray-900 dark:text-white">
-                                                            {{ currentIndex + 1 }}. {{ currentQuestion.question
+                                                            {{ quizStore.currentIndex + 1 }}. {{ quizStore.currentQuestion.question
                                                             }}?</h3>
 
                                                 </div>
@@ -139,13 +141,16 @@ const submit = () => {
 
                                                       <div
                                                             class="w-full divide-y divide-gray-200 shadow-sm dark:divide-gray-700">
-                                                            <div v-for="(answer, i) in currentQuestion.answers" :key="i"
+                                                            <div v-for="(answer, i) in quizStore.currentQuestion.answers" :key="i"
                                                                   @click="selectedAnswer(i)"
-                                                                  class="flex gap-2 mb-2 cursor-pointer items-center border border-gray-200 dark:border-gray-700  p-4 sm:items-start rounded-lg lg:items-center hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-800">
+                                                                  class="flex gap-2 mb-2 cursor-pointer items-center border border-gray-200 dark:border-gray-700  p-4 sm:items-start rounded-lg lg:items-center hover:bg-gray-100 dark:hover:bg-gray-600"
+                                                                  :class="{ 'bg-gray-100 dark:bg-gray-600': quizStore.isAnswerSelected(quizStore.currentQuestion.id, i) }">
                                                                   <div>
-                                                                        <input id="product1" type="radio"
-                                                                              :value="answer.id" name="answer"
-                                                                              class="h-6 w-6 rounded border-gray-300  bg-gray-100 text-primary-700 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600" />
+                                                                        <input :id="'answer-' + i" type="radio"
+                                                                              :value="i"
+                                                                              :checked="quizStore.isAnswerSelected(quizStore.currentQuestion.id, i)"
+                                                                              :name="'question-' + quizStore.currentQuestion.id"
+                                                                              class="h-6 w-6 rounded border-gray-300 bg-gray-100 text-primary-700 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600" />
                                                                   </div>
                                                                   <div
                                                                         class="min-w-0 flex-1 gap-14 xl:flex xl:items-center justify-between">
@@ -186,9 +191,7 @@ const submit = () => {
                                                                               xmlns="http://www.w3.org/2000/svg"
                                                                               fill="currentColor" viewBox="0 0 22 21">
                                                                               <path
-                                                                                    d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
-                                                                              <path
-                                                                                    d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
+                                                                                    d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
                                                                         </svg>
                                                                   </div>
                                                                   <div
@@ -202,9 +205,12 @@ const submit = () => {
                                                                         <svg class="inline w-5 h-5 text-gray-500 dark:text-gray-400"
                                                                               aria-hidden="true"
                                                                               xmlns="http://www.w3.org/2000/svg"
-                                                                              fill="currentColor" viewBox="0 0 20 14">
-                                                                              <path
-                                                                                    d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM9 6v2H2V6h7Zm2 0h7v2h-7V6Zm-9 4h7v2H2v-2Zm9 2v-2h7v2h-7Z" />
+                                                                              fill="none" viewBox="0 0 20 16">
+                                                                              <path stroke="currentColor"
+                                                                                    stroke-linecap="round"
+                                                                                    stroke-linejoin="round"
+                                                                                    stroke-width="2"
+                                                                                    d="M5 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1M2 5h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
                                                                         </svg>
                                                                   </div>
                                                                   <div
@@ -218,7 +224,7 @@ const submit = () => {
                                                                         <svg class="inline w-5 h-5 text-gray-500 dark:text-gray-400"
                                                                               aria-hidden="true"
                                                                               xmlns="http://www.w3.org/2000/svg"
-                                                                              fill="currentColor" viewBox="0 0 18 20">
+                                                                              fill="none" viewBox="0 0 18 20">
                                                                               <path
                                                                                     d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
                                                                         </svg>
@@ -255,15 +261,15 @@ const submit = () => {
                                                 <!-- Next and Previous Buttons -->
 
                                                 <div class="gap-4 sm:flex sm:items-center sm:justify-between">
-                                                      <PriButton :disabled="currentIndex === 0"
-                                                            :class="{ 'bg-transparent border border-zinc-700 dark:border-zinc-700 text-zinc-700': currentIndex === 0 }"
-                                                            @click="$emit('previousQuestion')" :label="'Previous'" />
-                                                      <PriButton v-if="currentIndex + 1 < currentLevelTotalQuestions"
-                                                            @click="$emit('nextQuestion')" :label="'Next'" />
+                                                      <PriButton :disabled="quizStore.currentIndex === 0"
+                                                            :class="{ 'bg-transparent border border-zinc-700 dark:border-zinc-700 text-zinc-700': quizStore.currentIndex === 0 }"
+                                                            @click="quizStore.previousQuestion()" :label="'Previous'" />
+                                                      <PriButton v-if="quizStore.currentIndex + 1 < quizStore.currentLevelTotalQuestions"
+                                                            @click="quizStore.nextQuestion()" :label="'Next'" />
                                                       <PriButton type="submit"
-                                                            v-if="currentIndex + 1 === currentLevelTotalQuestions"
+                                                            v-if="quizStore.currentIndex + 1 === quizStore.currentLevelTotalQuestions"
                                                             :disabled="form.processing"
-                                                            :class="{ 'bg-green-600/25': currentIndex + 1 === currentLevelTotalQuestions }"
+                                                            :class="{ 'bg-green-600/25': quizStore.currentIndex + 1 === quizStore.currentLevelTotalQuestions }"
                                                             :label="form.processing ? '...' : 'Submit'" />
                                                 </div>
                                           </div>

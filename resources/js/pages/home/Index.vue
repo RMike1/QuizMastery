@@ -1,50 +1,23 @@
 <script setup>
 import QuizModal from '@/components/QuizModal.vue';
 import Layout from '@/layouts/MainLayout.vue';
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { onMounted, onBeforeUnmount } from 'vue';
+import { useQuizStore } from '@/stores/quiz';
 
 defineOptions({ layout: Layout })
 const props = defineProps({
-   'level':Object
-});
-const currentLevelValue=ref(0);
-const currentQuestionValue=ref(0);
-const answersValue=ref(0);
-
-const currentQuestion=computed(()=>{
-   return props.level[currentLevelValue.value].questions[currentQuestionValue.value]
+   'level': Object
 });
 
-const currentLevelTotalQuestions=computed(()=>{
-   return props.level[currentLevelValue.value].questions_count
-});
-const currentIndex=computed(()=>{
-   return currentQuestionValue.value
-})
-const nextQuestion = () =>{
-   currentQuestionValue.value++
-}
-const previousQuestion = () =>{
-   currentQuestionValue.value--
-}
-const result = ref(0);
-const selectedAnswer = (i) =>{
-   if(currentQuestion.value.answers[i].is_correct===1){
-      result.value = result.value + Number(currentQuestion.value.marks)
-   }
-   // console.log(currentQuestion.value.answers[i]);
-   console.log(result.value);
-}
+const quizStore = useQuizStore();
+quizStore.setLevel(props.level);
 
-const showModal = ref(false);
-const showQuizSection = () => {
-   showModal.value = true;
-}
 const handleKeyUp = (event) => {
-   if (event.key === 'Escape' && showModal.value) {
-      showModal.value = false;
+   if (event.key === 'Escape' && quizStore.showModal) {
+      quizStore.hideQuizSection();
    }
 };
+
 onMounted(() => {
    window.addEventListener('keyup', handleKeyUp);
 });
@@ -67,7 +40,7 @@ onBeforeUnmount(() => {
                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam
                rem aperiam, eaque.</p>
 
-            <button @click="showQuizSection"
+            <button @click="quizStore.showQuizSection"
                class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
                Start Exam
                <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20"
@@ -107,7 +80,7 @@ onBeforeUnmount(() => {
    </section>
    <!-- quiz section -->
    <Teleport to="body">
-      <QuizModal :show="showModal" @closeQuizModal="showModal = false" :currentQuestion="currentQuestion" :currentLevelTotalQuestions="currentLevelTotalQuestions" :currentIndex="currentIndex" @nextQuestion="nextQuestion" @previousQuestion="previousQuestion" @selectedAnswer="selectedAnswer">
+      <QuizModal :show="quizStore.showModal" @closeQuizModal="quizStore.hideQuizSection" :currentQuestion="quizStore.currentQuestion" :currentLevelTotalQuestions="quizStore.currentLevelTotalQuestions" :currentIndex="quizStore.currentIndex" @nextQuestion="quizStore.nextQuestion" @previousQuestion="quizStore.previousQuestion" @selectedAnswer="quizStore.selectedAnswer">
       </QuizModal>
    </Teleport>
 </template>
