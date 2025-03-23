@@ -8,7 +8,7 @@ use App\Http\Controllers\Home\HomeController;
 //     return Inertia::render('Welcome');
 // })->name('home');
 // Route::middleware([config('jetstream.auth_session'),])->group(function () {
-    Route::get('/', [HomeController::class,'index'])->name('user.index');
+    Route::get('/', [HomeController::class,'index'])->name('home');
 // });
 
 Route::get('dashboard', function () {
