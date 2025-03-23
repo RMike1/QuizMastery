@@ -1,5 +1,5 @@
 <script setup>
-import QuizModal from '@/components/QuizModal.vue';
+import QuizModal from '@/components/home/QuizModal.vue';
 import Layout from '@/layouts/MainLayout.vue';
 import { onMounted, onBeforeUnmount } from 'vue';
 import { useQuizStore } from '@/stores/quiz';
