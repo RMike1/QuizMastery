@@ -1,5 +1,5 @@
 <template>
-    <nav class="fixed top-0 left-0 right-0 z-40 bg-warm-50/80 dark:bg-warm-950/80 backdrop-blur-lg border-b border-warm-200 dark:border-warm-800">
+    <nav class="fixed top-0 left-0 right-0 z-40 bg-[#1a1a1a]/90 backdrop-blur-lg border-b border-[#2a2a2a]">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
