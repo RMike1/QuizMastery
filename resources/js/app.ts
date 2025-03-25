@@ -5,9 +5,9 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-import { initializeTheme } from './composables/useAppearance';
 import { Head, Link } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
+import { useThemeStore } from './stores/theme';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -36,10 +36,15 @@ createInertiaApp({
     // },
 
     setup({ el, App, props, plugin }) {
+        const pinia = createPinia();
         const app = createApp({ render: () => h(App, props) });
+
+        // Initialize theme
+        const themeStore = useThemeStore(pinia);
+
         app.use(plugin)
             .use(ZiggyVue)
-            .use(createPinia())
+            .use(pinia)
             .component("Head", Head)
             .component("Link", Link)
             .mount(el);
@@ -49,6 +54,3 @@ createInertiaApp({
         showSpinner: true
     },
 });
-
-// This will set light / dark mode on page load...
-initializeTheme();

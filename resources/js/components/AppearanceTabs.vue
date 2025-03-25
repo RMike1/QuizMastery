@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAppearance } from '@/composables/useAppearance';
+import { useThemeStore, type Theme } from '@/stores/theme';
 import { Monitor, Moon, Sun } from 'lucide-vue-next';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 
 const { class: containerClass = '' } = defineProps<Props>();
 
-const { appearance, updateAppearance } = useAppearance();
+const themeStore = useThemeStore();
 
 const tabs = [
     { value: 'light', Icon: Sun, label: 'Light' },
@@ -22,10 +22,10 @@ const tabs = [
         <button
             v-for="{ value, Icon, label } in tabs"
             :key="value"
-            @click="updateAppearance(value)"
+            @click="themeStore.setTheme(value as Theme)"
             :class="[
                 'flex items-center rounded-md px-3.5 py-1.5 transition-colors',
-                appearance === value
+                themeStore.theme === value
                     ? 'bg-white shadow-sm dark:bg-neutral-700 dark:text-neutral-100'
                     : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
             ]"
