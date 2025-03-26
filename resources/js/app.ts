@@ -8,6 +8,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { Head, Link } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
 import { useThemeStore } from './stores/theme';
+import { useQuizStore } from './stores/quiz';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {

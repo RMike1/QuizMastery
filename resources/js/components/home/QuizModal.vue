@@ -1,11 +1,56 @@
+<script setup>
+import { onMounted, onUnmounted } from 'vue';
+import PriButton from '@/components/PriButton.vue';
+import { useForm } from '@inertiajs/vue3';
+import { useQuizStore } from '@/stores/quiz';
+
+const props = defineProps({
+  show: {
+    type: Boolean,
+    required: true
+  },
+  onCloseQuizModal: {
+    type: Function,
+    required: true
+  },
+  currentQuestion: {
+    type: Object,
+    required: true
+  }
+});
+
+const quizStore = useQuizStore();
+
+onMounted(() => {
+    quizStore.startTimer();
+});
+
+onUnmounted(() => {
+    quizStore.stopTimer();
+});
+
+const form = useForm({
+      answer: null
+});
+
+const submit = () => {
+      form.post(route('submit.answer'), {
+      });
+}
+
+const selectedAnswer = (index) => {
+      quizStore.selectedAnswer(index);
+}
+</script>
+
 <template>
       <Transition name="modal">
             <div v-if="show" class="fixed inset-0 z-[100] overflow-hidden flex items-center justify-center p-4 sm:p-6">
                   <!-- Backdrop -->
-                  <div class="fixed inset-0 bg-transparent backdrop-blur-lg transition-all" @click="quizStore.hideQuizSection"></div>
+                  <div class="fixed inset-0 bg-transparent backdrop-blur-lg transition-all" @click="onCloseQuizModal"></div>
 
                   <!-- Modal Content -->
-                  <div class="relative w-full h-full sm:h-[90vh] sm:w-[90vw] md:w-[85vw] lg:max-w-7xl bg-gray-50 dark:bg-[#111] backdrop-blur-md sm:rounded-[20px] lg:rounded-[30px] shadow-[0_0_40px_rgba(74,222,128,0.1)] sm:shadow-[0_0_60px_rgba(74,222,128,0.15)] lg:shadow-[0_0_80px_rgba(74,222,128,0.15)] overflow-hidden transform border-2 border-[#2a2a2a]/30 hover:shadow-[0_0_60px_rgba(74,222,128,0.2)] sm:hover:shadow-[0_0_80px_rgba(74,222,128,0.25)] lg:hover:shadow-[0_0_100px_rgba(74,222,128,0.25)] flex flex-col sm:mx-auto sm:my-auto">
+                  <div class="relative w-full h-full sm:h-[90vh] sm:w-[90vw] md:w-[85vw] lg:max-w-7xl bg-gray-50 dark:bg-[#111] backdrop-blur-md sm:rounded-[10px] lg:rounded-[20px] shadow-[0_0_40px_rgba(74,222,128,0.1)] sm:shadow-[0_0_60px_rgba(74,222,128,0.15)] lg:shadow-[0_0_80px_rgba(74,222,128,0.15)] overflow-hidden transform border-2 border-[#2a2a2a]/30 hover:shadow-[0_0_60px_rgba(74,222,128,0.2)] sm:hover:shadow-[0_0_80px_rgba(74,222,128,0.25)] lg:hover:shadow-[0_0_100px_rgba(74,222,128,0.25)] flex flex-col sm:mx-auto sm:my-auto">
                         <!-- Header -->
                         <div class="flex-none">
                               <div class="relative overflow-hidden">
@@ -17,7 +62,11 @@
                                           <h5 class="text-xl font-semibold text-gray-900 dark:text-white">
                                                 Quiz Time
                                           </h5>
-                                          <button @click="quizStore.hideQuizSection" 
+                                          <!-- Timer -->
+                                          <div class="text-lg font-bold text-gray-900 dark:text-white">
+                                                Time remaining: {{ quizStore.formatTime(quizStore.timer) }}
+                                          </div>
+                                          <button @click="onCloseQuizModal" 
                                                 class="group relative p-2 rounded-xl overflow-hidden transition-colors">
                                                 <!-- Button Background -->
                                                 <div class="absolute inset-0 bg-gray-100 dark:bg-gray-800/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -254,31 +303,6 @@
             </div>
       </Transition>
 </template>
-
-<script setup>
-import PriButton from '@/components/PriButton.vue';
-import { useForm } from '@inertiajs/vue3';
-import { useQuizStore } from '@/stores/quiz';
-
-const quizStore = useQuizStore();
-
-defineProps({
-      show: Boolean
-});
-
-const form = useForm({
-      answer: null
-});
-
-const submit = () => {
-      form.post(route('submit.answer'), {
-      });
-}
-
-const selectedAnswer = (index) => {
-      quizStore.selectedAnswer(index);
-}
-</script>
 
 <style scoped>
 .modal-enter-active,
