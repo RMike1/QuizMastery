@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, computed } from 'vue';
 import PriButton from '@/components/PriButton.vue';
 import { useForm } from '@inertiajs/vue3';
 import { useQuizStore } from '@/stores/quiz';
@@ -240,9 +240,7 @@ const selectedAnswer = (index) => {
                                           </button>
 
                                           <!-- Next/Submit Button -->
-                                          <button
-                                                v-if="quizStore.currentIndex + 1 < quizStore.currentLevelTotalQuestions"
-                                                @click="quizStore.nextQuestion()"
+                                          <button v-if="quizStore.currentIndex + 1 < quizStore.currentLevelTotalQuestions && !quizStore.allQuestionsAnswered" @click="quizStore.nextQuestion"
                                                 class="group relative px-6 py-2.5 rounded-xl font-medium transition-all duration-200 overflow-hidden">
                                                 <!-- Button Background -->
                                                 <div

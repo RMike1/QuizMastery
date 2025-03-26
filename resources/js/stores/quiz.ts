@@ -28,6 +28,10 @@ export const useQuizStore = defineStore('quiz', () => {
     return selectedAnswers.value[questionId] === answerIndex;
   });
 
+  const allQuestionsAnswered = computed(() => {
+    return currentLevelTotalQuestions.value === Object.keys(selectedAnswers.value).length;
+  });
+
   function nextQuestion(): void {
     currentQuestionValue.value++;
   }
@@ -108,5 +112,6 @@ export const useQuizStore = defineStore('quiz', () => {
     startTimer,
     stopTimer,
     formatTime,
+    allQuestionsAnswered
   };
 });
