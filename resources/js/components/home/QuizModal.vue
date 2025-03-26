@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, computed } from 'vue';
+import { onUnmounted, computed } from 'vue';
 import PriButton from '@/components/PriButton.vue';
 import { useForm } from '@inertiajs/vue3';
 import { useQuizStore } from '@/stores/quiz';
@@ -20,10 +20,6 @@ const props = defineProps({
 });
 
 const quizStore = useQuizStore();
-
-onMounted(() => {
-    quizStore.startTimer();
-});
 
 onUnmounted(() => {
     quizStore.stopTimer();
@@ -63,8 +59,16 @@ const selectedAnswer = (index) => {
                                                 Quiz Time
                                           </h5>
                                           <!-- Timer -->
-                                          <div class="text-lg font-bold text-gray-900 dark:text-white">
-                                                Time remaining: {{ quizStore.formatTime(quizStore.timer) }}
+                                          <div class="relative w-16 h-16 flex items-center justify-center">
+                                                <div class="absolute inset-0">
+                                                      <svg class="w-full h-full" viewBox="0 0 36 36">
+                                                            <path class="text-gray-200 dark:text-gray-700" stroke-width="2" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                                            <path class="text-green-500 transition-all duration-1000 ease-linear" stroke-width="2" stroke-dasharray="100, 100" :stroke-dashoffset="100 - (quizStore.timer / 300) * 100" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                                      </svg>
+                                                </div>
+                                                <div class="relative text-lg font-bold text-gray-900 dark:text-white">
+                                                      {{ quizStore.formatTime(quizStore.timer) }}
+                                                </div>
                                           </div>
                                           <button @click="onCloseQuizModal" 
                                                 class="group relative p-2 rounded-xl overflow-hidden transition-colors">
@@ -297,6 +301,18 @@ const selectedAnswer = (index) => {
                                     </div>
                               </div>
                         </div>
+                  </div>
+            </div>
+      </Transition>
+
+      <Transition name="modal">
+            <div v-if="quizStore.timeUp" class="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4">
+                  <div class="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full text-center">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Time's Up!</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">Unfortunately, you didn't complete the quiz in time. Better luck next time!</p>
+                        <button @click="quizStore.hideQuizSection" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                              Close
+                        </button>
                   </div>
             </div>
       </Transition>

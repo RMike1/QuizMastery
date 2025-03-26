@@ -11,6 +11,7 @@ export const useQuizStore = defineStore('quiz', () => {
   const selectedAnswers = ref<Record<string, number>>({});
   const timer = ref<number>(0);
   const intervalId = ref<number | null>(null);
+  const timeUp = ref(false);
 
   const currentQuestion = computed(() => {
     return level.value[currentLevelValue.value].questions[currentQuestionValue.value];
@@ -51,6 +52,7 @@ export const useQuizStore = defineStore('quiz', () => {
 
   function showQuizSection(): void {
     showModal.value = true;
+    startTimer();
   }
 
   function hideQuizSection(): void {
@@ -67,12 +69,14 @@ export const useQuizStore = defineStore('quiz', () => {
   }
 
   function startTimer(): void {
-    timer.value = 300;
+    timeUp.value = false;
+    timer.value = 30;
     intervalId.value = setInterval(() => {
       if (timer.value > 0) {
         timer.value--;
       } else {
         clearInterval(intervalId.value!);
+        timeUp.value = true;
       }
     }, 1000);
   }
@@ -112,6 +116,7 @@ export const useQuizStore = defineStore('quiz', () => {
     startTimer,
     stopTimer,
     formatTime,
-    allQuestionsAnswered
+    allQuestionsAnswered,
+    timeUp
   };
 });
