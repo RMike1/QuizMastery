@@ -153,10 +153,10 @@ const startQuiz = () => {
                                     </div>
 
                                     <!-- Quiz Content -->
-                                    <div v-if="quizStarted">
+                                    <div>
                                       <!-- Question -->
-                                      <div class="relative">
-                                        <h3 class="relative text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
+                                      <div class="z-10">
+                                        <h3 class=" text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
                                           {{ quizStore.currentIndex + 1 }}. {{ quizStore.currentQuestion.question }}?
                                         </h3>
                                       </div>
@@ -178,7 +178,7 @@ const startQuiz = () => {
                                               quizStore.isAnswerSelected(quizStore.currentQuestion.id, i) ? 'border-gray-900 bg-gray-50/50 dark:border-white dark:bg-[#111]/50' : 'border-gray-200 hover:border-gray-300 dark:border-zinc-800 dark:hover:border-zinc-700'
                                             ]">
                                               <!-- Answer Content -->
-                                              <div class="relative z-10 flex items-start gap-4 p-4">
+                                              <div class="z-10 flex items-start gap-4 p-4">
                                                 <div class="flex-shrink-0 pt-1">
                                                   <div class="w-5 h-5 rounded-full border-2 transition-colors" :class="[
                                                     quizStore.isAnswerSelected(quizStore.currentQuestion.id, i) ? 'border-gray-900 bg-gray-900 dark:border-white dark:bg-white' : 'border-gray-400 dark:border-gray-600 group-hover:border-gray-500 dark:group-hover:border-gray-500'
@@ -209,7 +209,7 @@ const startQuiz = () => {
                         </div>
 
                         <!-- Footer -->
-                        <div class="flex-none bg-gray-50 dark:bg-[#111] border-t border-gray-200 dark:border-gray-800/50">
+                        <div  class="flex-none bg-gray-50 dark:bg-[#111] border-t border-gray-200 dark:border-gray-800/50">
                               <div class="px-6 py-4">
                                     <div class="flex items-center justify-between gap-4">
                                           <!-- Previous Button -->
