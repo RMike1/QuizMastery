@@ -1,5 +1,5 @@
 <script setup>
-import { onUnmounted, computed } from 'vue';
+import { onUnmounted, computed, ref } from 'vue';
 import PriButton from '@/components/PriButton.vue';
 import { useForm } from '@inertiajs/vue3';
 import { useQuizStore } from '@/stores/quiz';
@@ -20,6 +20,7 @@ const props = defineProps({
 });
 
 const quizStore = useQuizStore();
+const quizStarted = ref(false);
 
 onUnmounted(() => {
     quizStore.stopTimer();
@@ -37,13 +38,18 @@ const submit = () => {
 const selectedAnswer = (index) => {
       quizStore.selectedAnswer(index);
 }
+
+const startQuiz = () => {
+  quizStarted.value = true;
+  quizStore.startTimer();
+}
 </script>
 
 <template>
       <Transition name="modal">
             <div v-if="show" class="fixed inset-0 z-[100] overflow-hidden flex items-center justify-center p-4 sm:p-6">
                   <!-- Backdrop -->
-                  <div class="fixed inset-0 bg-transparent backdrop-blur-lg transition-all" @click="onCloseQuizModal"></div>
+                  <div class="fixed inset-0 bg-black/50 backdrop-blur-lg transition-all" @click="onCloseQuizModal"></div>
 
                   <!-- Modal Content -->
                   <div class="relative w-full h-full sm:h-[90vh] sm:w-[90vw] md:w-[85vw] lg:max-w-7xl bg-gray-50 dark:bg-[#111] backdrop-blur-md sm:rounded-[10px] lg:rounded-[20px] shadow-[0_0_40px_rgba(74,222,128,0.1)] sm:shadow-[0_0_60px_rgba(74,222,128,0.15)] lg:shadow-[0_0_80px_rgba(74,222,128,0.15)] overflow-hidden transform border-2 border-[#2a2a2a]/30 hover:shadow-[0_0_60px_rgba(74,222,128,0.2)] sm:hover:shadow-[0_0_80px_rgba(74,222,128,0.25)] lg:hover:shadow-[0_0_100px_rgba(74,222,128,0.25)] flex flex-col sm:mx-auto sm:my-auto">
@@ -136,81 +142,68 @@ const selectedAnswer = (index) => {
                         <!-- Content Area -->
                         <div class="flex-1 overflow-y-auto">
                               <div class="p-6 space-y-6 bg-white dark:bg-[#111]">
-                                    <!-- Question -->
-                                    <div class="relative">
-                                          <h3
-                                                class="relative text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
-                                                {{ quizStore.currentIndex + 1 }}. {{ quizStore.currentQuestion.question
-                                                }}?
-                                          </h3>
+                                    <!-- Glass Overlay -->
+                                    <div v-if="!quizStarted" class="absolute inset-0 z-10 bg-white/50 dark:bg-[#111]/50 backdrop-blur-sm flex items-center justify-center">
+                                      <div class="text-center">
+                                        <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Ready to start the quiz?</h3>
+                                        <button @click="startQuiz" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                          Ready to start quiz?
+                                        </button>
+                                      </div>
                                     </div>
 
-                                    <div class="flex flex-col md:flex-row gap-6">
-                                          <!-- Image Section -->
-                                          <div v-if="quizStore.currentQuestion.image" class="w-full md:w-1/3">
-                                                <div
-                                                      class="relative group rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-[#111]">
-                                                      <img :src="quizStore.currentQuestion.image"
-                                                            :alt="'Question ' + (quizStore.currentIndex + 1) + ' image'"
-                                                            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105" />
-                                                      <!-- Overlay -->
-                                                      <div
-                                                            class="absolute inset-0 bg-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                                                      </div>
-                                                </div>
+                                    <!-- Quiz Content -->
+                                    <div v-if="quizStarted">
+                                      <!-- Question -->
+                                      <div class="relative">
+                                        <h3 class="relative text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
+                                          {{ quizStore.currentIndex + 1 }}. {{ quizStore.currentQuestion.question }}?
+                                        </h3>
+                                      </div>
+
+                                      <div class="flex flex-col md:flex-row gap-6">
+                                        <!-- Image Section -->
+                                        <div v-if="quizStore.currentQuestion.image" class="w-full md:w-1/3">
+                                          <div class="relative group rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-[#111]">
+                                            <img :src="quizStore.currentQuestion.image" :alt="'Question ' + (quizStore.currentIndex + 1) + ' image'" class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105" />
+                                            <!-- Overlay -->
+                                            <div class="absolute inset-0 bg-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                           </div>
+                                        </div>
 
-                                          <!-- Answers Section -->
-                                          <div class="w-full md:flex-1">
-                                                <div class="space-y-4">
-                                                      <div v-for="(answer, i) in quizStore.currentQuestion.answers"
-                                                            :key="i" @click="selectedAnswer(i)"
-                                                            class="group relative overflow-hidden rounded-xl border-2 transition-all duration-200 cursor-pointer"
-                                                            :class="[
-                                                                  quizStore.isAnswerSelected(quizStore.currentQuestion.id, i)
-                                                                        ? 'border-gray-900 bg-gray-50/50 dark:border-white dark:bg-[#111]/50'
-                                                                        : 'border-gray-200 hover:border-gray-300 dark:border-zinc-800 dark:hover:border-zinc-700'
-                                                            ]">
-                                                            <!-- Answer Content -->
-                                                            <div class="relative z-10 flex items-start gap-4 p-4">
-                                                                  <div class="flex-shrink-0 pt-1">
-                                                                        <div class="w-5 h-5 rounded-full border-2 transition-colors"
-                                                                              :class="[
-                                                                                    quizStore.isAnswerSelected(quizStore.currentQuestion.id, i)
-                                                                                          ? 'border-gray-900 bg-gray-900 dark:border-white dark:bg-white'
-                                                                                          : 'border-gray-400 dark:border-gray-600 group-hover:border-gray-500 dark:group-hover:border-gray-500'
-                                                                              ]">
-                                                                              <span v-if="quizStore.isAnswerSelected(quizStore.currentQuestion.id, i)"
-                                                                                    class="flex items-center justify-center h-full">
-                                                                                    <svg class="w-3 h-3 text-white dark:text-gray-900"
-                                                                                          fill="none"
-                                                                                          viewBox="0 0 24 24"
-                                                                                          stroke="currentColor">
-                                                                                          <path stroke-linecap="round"
-                                                                                                stroke-linejoin="round"
-                                                                                                stroke-width="2"
-                                                                                                d="M5 13l4 4L19 7">
-                                                                                          </path>
-                                                                                    </svg>
-                                                                              </span>
-                                                                        </div>
-                                                                  </div>
-
-                                                                  <div class="flex-1">
-                                                                        <p
-                                                                              class="text-base sm:text-lg text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                                                                              {{ answer.answer }}
-                                                                        </p>
-                                                                  </div>
-                                                            </div>
-
-                                                            <!-- Background Highlight Effect -->
-                                                            <div
-                                                                  class="absolute inset-0 bg-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                                                            </div>
-                                                      </div>
+                                        <!-- Answers Section -->
+                                        <div class="w-full md:flex-1">
+                                          <div class="space-y-4">
+                                            <div v-for="(answer, i) in quizStore.currentQuestion.answers" :key="i" @click="selectedAnswer(i)" class="group relative overflow-hidden rounded-xl border-2 transition-all duration-200 cursor-pointer" :class="[
+                                              quizStore.isAnswerSelected(quizStore.currentQuestion.id, i) ? 'border-gray-900 bg-gray-50/50 dark:border-white dark:bg-[#111]/50' : 'border-gray-200 hover:border-gray-300 dark:border-zinc-800 dark:hover:border-zinc-700'
+                                            ]">
+                                              <!-- Answer Content -->
+                                              <div class="relative z-10 flex items-start gap-4 p-4">
+                                                <div class="flex-shrink-0 pt-1">
+                                                  <div class="w-5 h-5 rounded-full border-2 transition-colors" :class="[
+                                                    quizStore.isAnswerSelected(quizStore.currentQuestion.id, i) ? 'border-gray-900 bg-gray-900 dark:border-white dark:bg-white' : 'border-gray-400 dark:border-gray-600 group-hover:border-gray-500 dark:group-hover:border-gray-500'
+                                                  ]">
+                                                    <span v-if="quizStore.isAnswerSelected(quizStore.currentQuestion.id, i)" class="flex items-center justify-center h-full">
+                                                      <svg class="w-3 h-3 text-white dark:text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                      </svg>
+                                                    </span>
+                                                  </div>
                                                 </div>
+
+                                                <div class="flex-1">
+                                                  <p class="text-base sm:text-lg text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                                                    {{ answer.answer }}
+                                                  </p>
+                                                </div>
+                                              </div>
+
+                                              <!-- Background Highlight Effect -->
+                                              <div class="absolute inset-0 bg-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
+                                            </div>
                                           </div>
+                                        </div>
+                                      </div>
                                     </div>
                               </div>
                         </div>
