@@ -147,7 +147,7 @@ const startQuiz = () => {
                                       <div class="text-center">
                                         <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Ready to start the quiz?</h3>
                                         <button @click="startQuiz" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                                          Ready to start quiz?
+                                          Lets'goo
                                         </button>
                                       </div>
                                     </div>
