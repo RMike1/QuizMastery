@@ -1,5 +1,5 @@
 <script setup>
-import { onUnmounted, computed, ref } from 'vue';
+import { onUnmounted, computed, ref, defineProps, defineEmits } from 'vue';
 import PriButton from '@/components/PriButton.vue';
 import { useForm } from '@inertiajs/vue3';
 import { useQuizStore } from '@/stores/quiz';
@@ -16,8 +16,18 @@ const props = defineProps({
   currentQuestion: {
     type: Object,
     required: true
+  },
+  currentLevelTotalQuestions: {
+    type: Number,
+    required: true
+  },
+  currentIndex: {
+    type: Number,
+    required: true
   }
 });
+
+const emit = defineEmits(['nextQuestion', 'previousQuestion', 'selectedAnswer']);
 
 const quizStore = useQuizStore();
 const quizStarted = ref(false);
@@ -37,6 +47,7 @@ const submit = () => {
 
 const selectedAnswer = (index) => {
       quizStore.selectedAnswer(index);
+      emit('selectedAnswer', index);
 }
 
 const startQuiz = () => {
@@ -213,7 +224,7 @@ const startQuiz = () => {
                               <div class="px-6 py-4">
                                     <div class="flex items-center justify-between gap-4">
                                           <!-- Previous Button -->
-                                          <button @click="quizStore.previousQuestion()"
+                                          <button @click="quizStore.previousQuestion(); emit('previousQuestion')"
                                                 :disabled="quizStore.currentIndex === 0"
                                                 class="group relative px-6 py-2.5 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden">
                                                 <!-- Button Background -->
@@ -237,7 +248,7 @@ const startQuiz = () => {
                                           </button>
 
                                           <!-- Next/Submit Button -->
-                                          <button v-if="quizStore.currentIndex + 1 < quizStore.currentLevelTotalQuestions && !quizStore.allQuestionsAnswered" @click="quizStore.nextQuestion"
+                                          <button v-if="quizStore.currentIndex + 1 < quizStore.currentLevelTotalQuestions && !quizStore.allQuestionsAnswered" @click="quizStore.nextQuestion(); emit('nextQuestion')"
                                                 class="group relative px-6 py-2.5 rounded-xl font-medium transition-all duration-200 overflow-hidden">
                                                 <!-- Button Background -->
                                                 <div
