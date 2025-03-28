@@ -161,7 +161,7 @@ const startQuiz = () => {
                                         </h3>
                                       </div>
 
-                                      <div class="flex flex-col md:flex-row gap-6">
+                                      <div class="flex flex-col md:flex-row gap-6 mt-6">
                                         <!-- Image Section -->
                                         <div v-if="quizStore.currentQuestion.image" class="w-full md:w-1/3">
                                           <div class="relative group rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-[#111]">
