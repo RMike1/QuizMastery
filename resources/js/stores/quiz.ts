@@ -52,7 +52,6 @@ export const useQuizStore = defineStore('quiz', () => {
 
   function showQuizSection(): void {
     showModal.value = true;
-    startTimer();
   }
 
   function hideQuizSection(): void {
