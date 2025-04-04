@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureModels();
         $this->configurePasswordValidation();
         $this->configureDates();
-        $this->configureUrls();
+        // $this->configureUrls();
     }
 
     /**
