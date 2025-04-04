@@ -17,11 +17,12 @@ class LevelFactory extends Factory
      */
     public function definition(): array
     {
-        $user=User::first()->id;
+        $user = User::first()->id;
+
         return [
-            'level'=>fake()->randomElement([1,2,3,4]),
-            'total_questions'=>fake()->randomElement([1,2,3,4]),
-            'user_id'=>$user
+            'level' => fake()->randomElement([1, 2, 3, 4]),
+            'total_questions' => fake()->randomElement([1, 2, 3, 4]),
+            'user_id' => $user,
         ];
     }
 }

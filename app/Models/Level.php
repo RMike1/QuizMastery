@@ -10,12 +10,16 @@ class Level extends Model
 {
     /** @use HasFactory<\Database\Factories\LevelFactory> */
     use HasFactory, HasUlids;
+
     protected $guarded = [];
 
-    public function questions(){
+    public function questions()
+    {
         return $this->hasMany(Question::class);
     }
-    public function answers(){
-        return $this->hasManyThrough(Answer::class,Question::class);
+
+    public function answers()
+    {
+        return $this->hasManyThrough(Answer::class, Question::class);
     }
 }

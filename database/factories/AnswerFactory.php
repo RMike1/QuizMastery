@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Question;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +18,7 @@ class AnswerFactory extends Factory
     {
         return [
             'answer' => fake()->sentence(),
-            'is_correct' => fake()->boolean()
+            'is_correct' => fake()->boolean(),
         ];
     }
 }

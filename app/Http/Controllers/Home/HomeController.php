@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Home;
 
-use Inertia\Inertia;
+use App\Http\Controllers\Controller;
 use App\Models\Level;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 class HomeController extends Controller
 {
@@ -16,9 +16,9 @@ class HomeController extends Controller
     public function index()
     {
         return Inertia::render('home/Index', [
-            'level' => Level::query()->select('id','level','total_questions')->with(['questions' => function ($query) {
-                $query->select('id','question','marks','image','level_id')->inRandomOrder()->with(['answers' => function ($q) {
-                    $q->select('id','answer','question_id','is_correct')->inRandomOrder();
+            'level' => Level::query()->select('id', 'level', 'total_questions')->with(['questions' => function ($query) {
+                $query->select('id', 'question', 'marks', 'image', 'level_id')->inRandomOrder()->with(['answers' => function ($q) {
+                    $q->select('id', 'answer', 'question_id', 'is_correct')->inRandomOrder();
                 }]);
             }])->withCount('questions')->get(),
             'canLogin' => Route::has('login'),

@@ -10,6 +10,7 @@ class Question extends Model
 {
     /** @use HasFactory<\Database\Factories\QuestionFactory> */
     use HasFactory, HasUlids;
+
     protected $guarded = [];
 
     public function answers()
@@ -17,8 +18,8 @@ class Question extends Model
         return $this->hasMany(Answer::class);
     }
 
-    public function level(){
+    public function level()
+    {
         return $this->belongsTo(Level::class);
     }
-
 }

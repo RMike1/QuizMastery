@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'only' => ['home']
+    'only' => ['home', 'login', 'register', 'password.request', 'password.email'],
 ];
